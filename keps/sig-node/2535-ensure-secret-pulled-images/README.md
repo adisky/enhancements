@@ -299,6 +299,11 @@ Consider including folks who also work outside the SIG or subproject.
 -->
 
 ## Design Details
+To enforce the authentication of image for the pods which wants to use cached images, We save the image reference and secret (used to pull the image) in an in memory list. When a pod requests to use that image, we match its secret with the original secret and if they does not match we try to pull image from registry and registry will verify the authority of the requester.
+
+For authorized users this will benefit as if the secrets are matched they do not need to make call to the registry for re-authentication/re-pulling.
+For malacious attempts, it will try to reauth with registry and access will be rejected by registry.
+
 Create a map of image ref and hash(calculated by image auth) during image manager initialization.
 `ensureSecretPulledImage = make(map[string]*ensureSecretPulledImageDigest)
 `
