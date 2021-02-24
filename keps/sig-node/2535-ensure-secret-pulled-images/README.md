@@ -299,6 +299,14 @@ Consider including folks who also work outside the SIG or subproject.
 -->
 
 ## Design Details
+Create a map of image ref and hash(calculated by image auth) during image manager initialization.
+`ensureSecretPulledImage = make(map[string]*ensureSecretPulledImageDigest)
+`
+
+`EnsureImageExists` sends the request to container runtimes through cri-api to pull the image according to image pull policy and other buisness logic.
+for `IfnotPresent` policy during this call we will match the current hash of image auth with previous one. If they match we will allow to use the cached image on the node. If they don't we mark as image needs to be pulled, send request to container runtime and it re auths with the image registry.
+
+cavets: Pull policy never, Stale cached list.
 
 <!--
 This section should contain enough information that the specifics of your
